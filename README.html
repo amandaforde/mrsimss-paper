@@ -381,15 +381,15 @@ with other classical MR approaches, across varying parameters such as
 exposure-outcome correlation, degree of sample overlap and sample
 size.</p>
 <ul>
-<li><strong><em>Output:</em></strong> sims-res-200.csv,
-sims-res-500.csv, sims-res-50.csv</li>
+<li><em>Output:</em> sims-res-200.csv, sims-res-500.csv,
+sims-res-50.csv</li>
 </ul>
 <p><strong>02-sims-threshold.R:</strong> This scripts run a small
 simulation study which assesses the performance of SimSS-3-RAPS in
 low-power settings with different significance thresholds applied in the
 selection step.</p>
 <ul>
-<li><strong><em>Output:</em></strong> sims-res-thresh.csv</li>
+<li><em>Output:</em> sims-res-thresh.csv</li>
 </ul>
 <p> </p>
 </div>
@@ -417,30 +417,130 @@ significance threshold of 1 <span>×</span> 10<sup>-8</sup> were
 included. This resulted in a total of 7,915,560 SNPs that were
 considered suitable for our analyses.</p>
 <p>This QC process provided us with the following files: bmi4plink.txt,
-T2D4plink.txt, height4plink.txt, covariates.txt and *_qcd.psam,
-*_qcd.pvar, *_qcd.pgen files for each chromosome.</p>
-<p> </p>
-<div id="ld-pruning" class="section level5">
-<h5>LD-pruning</h5>
-<p><strong>Brief note on this</strong></p>
+T2D4plink.txt, covariates.txt and *_qcd.psam, *_qcd.pvar, *_qcd.pgen
+files for each chromosome.</p>
 <p> </p>
 </div>
+<div id="ld-pruning" class="section level4">
+<h4>LD-pruning</h4>
+<p>The total set of 7,915,560 SNPs were <strong>pruned</strong> to
+provide a <em>sub set of approximately independent variants</em>.
+Pruning occurred by first calculating LD between each pair of SNPs in a
+window of 50 SNPs. If an LD value greater than 0.5 was observed, then
+one SNP out of this pair was removed. The window was shifted 5 SNPs
+forward and the process repeated. 1,589,295 genetic variants remained
+after this procedure, a data set about 20% of the size of the
+original.</p>
+<p>The following code was run: <code>sbatch LD-prune.sh</code></p>
+<p><strong>LD-prune.sh:</strong> This shell script performs pruning
+using PLINK 2.0 and <code>--indep-pairwise 50 5 0.5</code> to obtain a
+full list of pruned SNPs.</p>
+<ul>
+<li><p><em>Input:</em> *_qcd.psam, *_qcd.pvar, *_qcd.pgen files for each
+chromosome, bmi4plink.txt</p></li>
+<li><p><em>Output:</em> *_bmi.prune.in for each chromosome</p></li>
+</ul>
+<p> </p>
 </div>
 <div id="same-trait-empirical-analysis" class="section level4">
-<h4>Same-trait empirical analysis</h4>
-<p><strong>BMI-BMI.R:</strong></p>
+<h4><strong>Same-trait empirical analysis</strong></h4>
+<div id="obtaining-10-pairs-of-independent-samples" class="section level5">
+<h5>1. Obtaining 10 pairs of independent samples</h5>
+<p>The following code was run:
+<code>Rscript 00-split-BMI.R bmi4plink.txt</code></p>
+<p><strong>00-split-BMI.R:</strong> This script takes the full UK
+Biobank BMI data set and randomly splits it into two independent samples
+10 times, providing 10 pairs of independent sample sets.</p>
 <ul>
-<li><strong><em>Output:</em></strong> res-BMI-BMI.csv</li>
+<li><p><em>Input:</em> bmi4plink.txt</p></li>
+<li><p><em>Output:</em> bmi<span class="math inline">\(\dagger\)</span>A.txt, bmi<span class="math inline">\(\dagger\)</span>B.txt for <span class="math inline">\(\dagger\)</span> <span class="math inline">\(\in\)</span> {1,2,…,10}</p></li>
 </ul>
 <p> </p>
 </div>
-<div id="effect-of-bmi-on-t2d" class="section level4">
-<h4>Effect of BMI on T2D</h4>
-<p><strong>BMI-T2D.R:</strong></p>
+<div id="conducting-gwass-for-each-set-of-samples" class="section level5">
+<h5>2. Conducting GWASs for each set of samples</h5>
+<p>With respect to each sample set contained in bmi<span class="math inline">\(\dagger\)</span>A.txt or bmi<span class="math inline">\(\dagger\)</span>B.txt, the following code was run:
+<code>sbatch 01-GWAS-BMI.sh</code></p>
+<p><strong>01-GWAS-BMI.sh:</strong> This script uses PLINK 2.0 to
+produce *_qcd.bim, *_qcd.bed, *_qcd.fam files, with the phenotype data
+being specified in a given sample set, e.g. bmi1A.txt. A linear model is
+then fitted for every variant in which 8 principal components are
+included as well as age. Results from the files
+bmi_res_PHENO1.glm.linear for chromosomes 1 to 22 are then combined into
+a summarized text file, e.g. summary-stats-BMI1A.txt, which contains
+information regarding chromosome, position, rsID, effect size and
+corresponding standard error for each genetic variant.</p>
 <ul>
-<li><strong><em>Output:</em></strong> res-BMI-T2D.csv</li>
+<li><p><em>Input:</em> *_qcd.psam, *_qcd.pvar, *_qcd.pgen files for each
+chromosome, bmi<span class="math inline">\(\dagger\)</span>A.txt or
+bmi<span class="math inline">\(\dagger\)</span>B.txt for <span class="math inline">\(\dagger\)</span> <span class="math inline">\(\in\)</span> {1,2,…,10},
+summary-stats-BMI.R</p></li>
+<li><p><em>Output:</em> summary-stats-BMI<span class="math inline">\(\dagger\)</span>A.txt or summary-stats-BMI<span class="math inline">\(\dagger\)</span>B.txt for <span class="math inline">\(\dagger\)</span> <span class="math inline">\(\in\)</span> {1,2,…,10}</p></li>
 </ul>
 <p> </p>
+</div>
+<div id="performing-mr-analyses" class="section level5">
+<h5>3. Performing MR analyses</h5>
+<p><strong>02-BMI-BMI.R:</strong> This script is used to conduct
+same-trait MR analyses by applying four variants of MR-SimSS, together
+with other summary-level MR methods, to BMI GWAS summary statistics.</p>
+<ul>
+<li><em>Input:</em> summary-stats-BMI<span class="math inline">\(\dagger\)</span>A.txt, summary-stats-BMI<span class="math inline">\(\dagger\)</span>B.txt for <span class="math inline">\(\dagger\)</span> <span class="math inline">\(\in\)</span> {1,2,…,10}</li>
+<li><em>Output:</em> res-BMI-BMI.csv</li>
+</ul>
+<p> </p>
+</div>
+</div>
+<div id="effect-of-bmi-on-t2d" class="section level4">
+<h4><strong>Effect of BMI on T2D</strong></h4>
+<div id="obtaining-sample-sets-with-varying-overlap" class="section level5">
+<h5>1. Obtaining sample sets with varying overlap</h5>
+<p>The following code was run:
+<code>Rscript 00-sample-T2D-BMI.R T2D4plink.txt bmi4plink.txt</code></p>
+<p><strong>00-sample-T2D-BMI.R:</strong> This script randomly produces
+UK Biobank sample sets, one for T2D and five for BMI, in which the BMI
+sample sets have varying degrees of sample overlap with the T2D sample
+set.</p>
+<ul>
+<li><p><em>Input:</em> T2D4plink.txt bmi4plink.txt</p></li>
+<li><p><em>Output:</em> T2D.txt, bmi<span class="math inline">\(\ddagger\)</span>.txt for <span class="math inline">\(\ddagger\)</span> <span class="math inline">\(\in\)</span> {0,25,50,75,100}</p></li>
+</ul>
+<p> </p>
+</div>
+<div id="conducting-gwass" class="section level5">
+<h5>2. Conducting GWASs</h5>
+<p>The following code was run:
+<code>sbatch 01-GWAS-T2D-BMI.sh</code></p>
+<p><strong>01-GWAS-T2D-BMI.sh:</strong> This script uses PLINK 2.0 to
+produce *_qcd.bim, *_qcd.bed, *_qcd.fam files, with the phenotype data
+being specified in a given sample set, e.g. T2D.txt. For T2D, a logistic
+model is then fitted for every variant in which 8 principal components
+are included as well as age. Results from the files
+T2D_res_PHENO1.glm.logistic.hybrid for chromosomes 1 to 22 are then
+combined into a summarized text file, e.g. summary-stats-T2D.txt, which
+contains information regarding chromosome, position, rsID, effect size
+and corresponding standard error for each genetic variant. A similar
+process is repeated for each of the BMI sample sets.</p>
+<ul>
+<li><p><em>Input:</em> *_qcd.psam, *_qcd.pvar, *_qcd.pgen files for each
+chromosome, T2D.txt, bmi<span class="math inline">\(\ddagger\)</span>.txt for <span class="math inline">\(\ddagger\)</span> <span class="math inline">\(\in\)</span> {0,25,50,75,100},
+summary-stats.R</p></li>
+<li><p><em>Output:</em> summary-stats-T2D.txt, summary-stats-BMI<span class="math inline">\(\ddagger\)</span>.txt for <span class="math inline">\(\ddagger\)</span> <span class="math inline">\(\in\)</span> {0,25,50,75,1}</p></li>
+</ul>
+<p> </p>
+</div>
+<div id="performing-mr-analyses-1" class="section level5">
+<h5>3. Performing MR analyses</h5>
+<p><strong>02-BMI-T2D.R:</strong> This script applies four variants of
+MR-SimSS, together with other summary-level MR methods, to GWAS summary
+statistics in order to estimate the effect of BMI on T2D, under varying
+degrees of sample overlap.</p>
+<ul>
+<li><em>Input:</em> summary-stats-T2D.txt, summary-stats-BMI<span class="math inline">\(\ddagger\)</span>.txt for <span class="math inline">\(\ddagger\)</span> <span class="math inline">\(\in\)</span> {0,25,50,75,1}</li>
+<li><em>Output:</em> res-BMI-T2D.csv</li>
+</ul>
+<p> </p>
+</div>
 </div>
 </div>
 <div id="figures" class="section level3">
