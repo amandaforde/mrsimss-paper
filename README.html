@@ -352,9 +352,9 @@ display: none;
 </div>
 
 
-<div id="simulated-sample-splitting-approach-to-address-selection-bias-in-mendelian-randomization-studies" class="section level2">
-<h2>Simulated sample splitting approach to address selection bias in
-Mendelian Randomization studies</h2>
+<div id="simulated-sample-splitting-approach-to-address-selection-bias-in-mendelian-randomization-studies" class="section level1">
+<h1>Simulated sample splitting approach to address selection bias in
+Mendelian Randomization studies</h1>
 <p>This repository contains the scripts used to provide results and
 figures for the manuscript, <strong><em>“Simulated sample splitting
 approach to address selection bias in Mendelian Randomization
@@ -371,8 +371,8 @@ different traits, body mass index (BMI) and type 2 diabetes (T2D).</p>
 <code>simulations/scripts</code> while scripts used for the empirical
 analyses are contained in <code>real_data/scripts</code>.</p>
 <p> </p>
-<div id="simulation-study" class="section level3">
-<h3>Simulation study</h3>
+<div id="simulation-study" class="section level2">
+<h2>Simulation study</h2>
 <p><strong>00-sims-funs.R:</strong> This script provides all functions
 required for simulations.</p>
 <p><strong>01-sims.R:</strong> This script runs the main simulation
@@ -393,10 +393,10 @@ selection step.</p>
 </ul>
 <p> </p>
 </div>
-<div id="empirical-analyses" class="section level3">
-<h3>Empirical analyses</h3>
-<div id="quality-control" class="section level4">
-<h4>Quality control</h4>
+<div id="empirical-analyses" class="section level2">
+<h2>Empirical analyses</h2>
+<div id="quality-control" class="section level3">
+<h3>Quality control</h3>
 <p>The genotypic data used was collected, processed and imputed by UK
 Biobank (UKBB) (<a href="http://www.ukbiobank.ac.uk/">http://www.ukbiobank.ac.uk/</a>). The
 required quality control steps were implemented using the code available
@@ -421,8 +421,8 @@ T2D4plink.txt, covariates.txt and *_qcd.psam, *_qcd.pvar, *_qcd.pgen
 files for each chromosome.</p>
 <p> </p>
 </div>
-<div id="ld-pruning" class="section level4">
-<h4>LD-pruning</h4>
+<div id="ld-pruning" class="section level3">
+<h3>LD-pruning</h3>
 <p>The total set of 7,915,560 SNPs were <strong>pruned</strong> to
 provide a <em>sub set of approximately independent variants</em>.
 Pruning occurred by first calculating LD between each pair of SNPs in a
@@ -442,10 +442,10 @@ chromosome, bmi4plink.txt</p></li>
 </ul>
 <p> </p>
 </div>
-<div id="same-trait-empirical-analysis" class="section level4">
-<h4><strong>Same-trait empirical analysis</strong></h4>
-<div id="obtaining-10-pairs-of-independent-samples" class="section level5">
-<h5>1. Obtaining 10 pairs of independent samples</h5>
+<div id="same-trait-empirical-analysis" class="section level3">
+<h3><strong>Same-trait empirical analysis</strong></h3>
+<div id="obtaining-10-pairs-of-independent-samples" class="section level4">
+<h4>1. Obtaining 10 pairs of independent samples</h4>
 <p>The following code was run:
 <code>Rscript 00-split-BMI.R bmi4plink.txt</code></p>
 <p><strong>00-split-BMI.R:</strong> This script takes the full UK
@@ -457,8 +457,8 @@ Biobank BMI data set and randomly splits it into two independent samples
 </ul>
 <p> </p>
 </div>
-<div id="conducting-gwass-for-each-set-of-samples" class="section level5">
-<h5>2. Conducting GWASs for each set of samples</h5>
+<div id="conducting-gwass-for-each-set-of-samples" class="section level4">
+<h4>2. Conducting GWASs for each set of samples</h4>
 <p>With respect to each sample set contained in bmi<span class="math inline">\(\dagger\)</span>A.txt or bmi<span class="math inline">\(\dagger\)</span>B.txt, the following code was run:
 <code>sbatch 01-GWAS-BMI.sh</code></p>
 <p><strong>01-GWAS-BMI.sh:</strong> This script uses PLINK 2.0 to
@@ -479,8 +479,8 @@ summary-stats-BMI.R</p></li>
 </ul>
 <p> </p>
 </div>
-<div id="performing-mr-analyses" class="section level5">
-<h5>3. Performing MR analyses</h5>
+<div id="performing-mr-analyses" class="section level4">
+<h4>3. Performing MR analyses</h4>
 <p><strong>02-BMI-BMI.R:</strong> This script is used to conduct
 same-trait MR analyses by applying four variants of MR-SimSS, together
 with other summary-level MR methods, to BMI GWAS summary statistics.</p>
@@ -491,10 +491,10 @@ with other summary-level MR methods, to BMI GWAS summary statistics.</p>
 <p> </p>
 </div>
 </div>
-<div id="effect-of-bmi-on-t2d" class="section level4">
-<h4><strong>Effect of BMI on T2D</strong></h4>
-<div id="obtaining-sample-sets-with-varying-overlap" class="section level5">
-<h5>1. Obtaining sample sets with varying overlap</h5>
+<div id="effect-of-bmi-on-t2d" class="section level3">
+<h3><strong>Effect of BMI on T2D</strong></h3>
+<div id="obtaining-sample-sets-with-varying-overlap" class="section level4">
+<h4>1. Obtaining sample sets with varying overlap</h4>
 <p>The following code was run:
 <code>Rscript 00-sample-T2D-BMI.R T2D4plink.txt bmi4plink.txt</code></p>
 <p><strong>00-sample-T2D-BMI.R:</strong> This script randomly produces
@@ -507,8 +507,8 @@ set.</p>
 </ul>
 <p> </p>
 </div>
-<div id="conducting-gwass" class="section level5">
-<h5>2. Conducting GWASs</h5>
+<div id="conducting-gwass" class="section level4">
+<h4>2. Conducting GWASs</h4>
 <p>The following code was run:
 <code>sbatch 01-GWAS-T2D-BMI.sh</code></p>
 <p><strong>01-GWAS-T2D-BMI.sh:</strong> This script uses PLINK 2.0 to
@@ -529,8 +529,8 @@ summary-stats.R</p></li>
 </ul>
 <p> </p>
 </div>
-<div id="performing-mr-analyses-1" class="section level5">
-<h5>3. Performing MR analyses</h5>
+<div id="performing-mr-analyses-1" class="section level4">
+<h4>3. Performing MR analyses</h4>
 <p><strong>02-BMI-T2D.R:</strong> This script applies four variants of
 MR-SimSS, together with other summary-level MR methods, to GWAS summary
 statistics in order to estimate the effect of BMI on T2D, under varying
@@ -543,8 +543,8 @@ degrees of sample overlap.</p>
 </div>
 </div>
 </div>
-<div id="figures" class="section level3">
-<h3>Figures</h3>
+<div id="figures" class="section level2">
+<h2>Figures</h2>
 <p>The script below was used to produce all figures in the manuscript,
 as well as supplementary figures, and can be found in the
 <code>figures</code> folder.</p>

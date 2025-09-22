@@ -1,4 +1,4 @@
-## Simulated sample splitting approach to address selection bias in Mendelian Randomization studies
+# Simulated sample splitting approach to address selection bias in Mendelian Randomization studies
 
 This repository contains the scripts used to provide results and figures for the manuscript, ***"Simulated sample splitting approach to address selection bias in Mendelian Randomization studies"***. In our work, we propose MR Simulated Sample Splitting (MR-SimSS), a novel method that corrects Winner's Curse bias in Mendelian Randomization (MR) studies using only GWAS summary data. MR-SimSS is also designed to remain robust under varying degrees of sample overlap between exposure and outcome datasets. The performance of MR-SimSS is evaluated first using a **simulation study** with a wide variety of simulated data sets and then, by means of two **empirical analyses** using real data sets of two different traits, body mass index (BMI) and type 2 diabetes (T2D).
 
@@ -6,7 +6,7 @@ Scripts related to simulations are contained in `simulations/scripts` while scri
 
 &nbsp;
 
-### Simulation study
+## Simulation study
 
 **00-sims-funs.R:** This script provides all functions required for simulations.
 
@@ -23,9 +23,9 @@ thresholds applied in the selection step.
 
 &nbsp;
 
-### Empirical analyses
+## Empirical analyses
 
-#### Quality control
+### Quality control
 
 The genotypic data used was collected, processed and imputed by UK Biobank (UKBB) ([http://www.ukbiobank.ac.uk/](http://www.ukbiobank.ac.uk/)). The required quality control steps were implemented using the code available at [https://github.com/coggene/UK-Biobank-QC](https://github.com/coggene/UK-Biobank-QC).
 
@@ -35,7 +35,7 @@ This QC process provided us with the following files: bmi4plink.txt, T2D4plink.t
 
 &nbsp;
 
-#### LD-pruning
+### LD-pruning
 
 The total set of 7,915,560 SNPs were **pruned** to provide a *sub set of approximately independent variants*. Pruning occurred by first calculating LD between each pair of SNPs in a window of 50 SNPs. If an LD value greater than 0.5 was observed, then one SNP out of this pair was removed. The window was shifted 5 SNPs forward and the process repeated. 1,589,295 genetic variants remained after this procedure, a data set about 20% of the size of the original.
 
@@ -49,9 +49,9 @@ The following code was run: `sbatch LD-prune.sh`
 
 &nbsp;
 
-#### **Same-trait empirical analysis**
+### **Same-trait empirical analysis**
 
-##### 1. Obtaining 10 pairs of independent samples
+#### 1. Obtaining 10 pairs of independent samples
 
 The following code was run: `Rscript 00-split-BMI.R bmi4plink.txt`
 
@@ -63,7 +63,7 @@ The following code was run: `Rscript 00-split-BMI.R bmi4plink.txt`
 
 &nbsp;
 
-##### 2. Conducting GWASs for each set of samples
+#### 2. Conducting GWASs for each set of samples
 
 With respect to each sample set contained in bmi$\dagger$A.txt or bmi$\dagger$B.txt, the following code was run: `sbatch 01-GWAS-BMI.sh`
 
@@ -76,7 +76,7 @@ With respect to each sample set contained in bmi$\dagger$A.txt or bmi$\dagger$B.
 
 &nbsp;
 
-##### 3. Performing MR analyses
+#### 3. Performing MR analyses
 
 **02-BMI-BMI.R:** This script is used to conduct same-trait MR analyses by applying four variants of MR-SimSS, together with other summary-level MR methods, to BMI GWAS summary statistics.
 
@@ -86,9 +86,9 @@ With respect to each sample set contained in bmi$\dagger$A.txt or bmi$\dagger$B.
 &nbsp;
 
 
-#### **Effect of BMI on T2D**
+### **Effect of BMI on T2D**
 
-##### 1. Obtaining sample sets with varying overlap
+#### 1. Obtaining sample sets with varying overlap
 
 The following code was run: `Rscript 00-sample-T2D-BMI.R T2D4plink.txt bmi4plink.txt`
 
@@ -100,7 +100,7 @@ The following code was run: `Rscript 00-sample-T2D-BMI.R T2D4plink.txt bmi4plink
 
 &nbsp;
 
-##### 2. Conducting GWASs
+#### 2. Conducting GWASs
 
 The following code was run: `sbatch 01-GWAS-T2D-BMI.sh`
 
@@ -112,7 +112,7 @@ The following code was run: `sbatch 01-GWAS-T2D-BMI.sh`
 
 &nbsp;
 
-##### 3. Performing MR analyses
+#### 3. Performing MR analyses
 
 **02-BMI-T2D.R:** This script applies four variants of MR-SimSS, together with other summary-level MR methods, to GWAS summary statistics in order to estimate the effect of BMI on T2D, under varying degrees of sample overlap.
 
@@ -121,7 +121,7 @@ The following code was run: `sbatch 01-GWAS-T2D-BMI.sh`
 
 &nbsp;
 
-### Figures
+## Figures
 
 The script below was used to produce all figures in the manuscript, as well as supplementary figures, and can be found in the `figures` folder.
 
